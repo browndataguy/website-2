@@ -1,10 +1,12 @@
 from sqlalchemy import create_engine, text
+import os
 
-db_connection_string = "mysql+pymysql://dp1mc2p7n8d3mtj3oqrt:pscale_pw_oz7VkSNRWjW46w3FYzmORHnK7MD7dtJdegsVzWV7dVG@aws.connect.psdb.cloud/joviancareer?charset=utf8mb4"
+db_connection_string = os.environ['DB_CONNECTION_STRING']
 
 
 engine = create_engine(
   db_connection_string,
+   pool_pre_ping=True,
   connect_args={
     "ssl": {
         "ssl_ca": "/etc/ssl/cert.pem"
@@ -17,7 +19,7 @@ def loads_jobs_from_db():
     result = conn.execute(text("select * from jobs"))
     jobs = []
     for row in result.all():
-      jobs.append(dict(row))
+      jobs.append(row._asdict())
     return jobs
 
 
